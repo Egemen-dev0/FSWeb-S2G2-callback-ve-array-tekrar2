@@ -25,10 +25,11 @@ const { fifaData } = require('./fifa.js')
 	💡 İPUCU - verilen data içindeki nesnelerin(objects) "Stage" anahtarına bakmalısınız
 */
 
-function Finaller(/* kodlar buraya */) {
-	
-    /* kodlar buraya */
+function Finaller(arrTtoBeLooked) {
+	return arrTtoBeLooked.filter((match) => match.Stage === "Final")
 }
+console.table(Finaller(fifaData));
+
 
 
 
@@ -39,10 +40,11 @@ function Finaller(/* kodlar buraya */) {
 	3. Finaller data setindeki tüm yılları içeren "years" adındaki diziyi(array) döndürecek
 	*/
 
-function Yillar(/* kodlar buraya */) {
-	
-    /* kodlar buraya */
+function Yillar(arrTtoBeLooked, callback) {
+	return callback(arrTtoBeLooked).filter((yil) => yil.Year);
 }
+console.table(Yillar(fifaData, Finaller));
+
 
 
 /*  Görev 4: 
@@ -53,11 +55,26 @@ function Yillar(/* kodlar buraya */) {
 	💡 İPUCU: Beraberlikler(ties) için şimdilik endişelenmeyin (Detaylı bilgi için README dosyasına bakabilirsiniz.)
 	4. Tüm kazanan ülkelerin isimlerini içeren `kazananlar` adında bir dizi(array) döndürecek(return)  */ 
 
-function Kazananlar(/* kodlar buraya */) {
-	
-    /* kodlar buraya */
-	
+function Kazananlar(arrTtoBeLooked, callbackFinal) {
+	const winnersNames = [];
+	const filteredArr = callbackFinal(arrTtoBeLooked);
+
+	const winnerFinder = filteredArr.map((finalMatch) => {
+		const evSahibiGolleri = finalMatch["Home Team Goals"];
+		const misafirGolleri = finalMatch["Away Team Goals"];
+
+		if (evSahibiGolleri > misafirGolleri) {
+			winnersNames.push(finalMatch["Home Team Name"])
+		} else if (evSahibiGolleri < misafirGolleri) {
+			winnersNames.push(finalMatch["Away Team Name"])
+		}
+	});
+	return winnersNames
+
 }
+
+console.table(Kazananlar(fifaData, Finaller));
+
 
 
 
@@ -72,11 +89,17 @@ function Kazananlar(/* kodlar buraya */) {
 	💡 İPUCU: her cümlenin adım 4'te belirtilen cümleyle birebir aynı olması gerekmektedir.
 */
 
-function YillaraGoreKazananlar(/* kodlar buraya */) {
-	
-/* kodlar buraya */
-
+function YillaraGoreKazananlar(arrTtoBeLooked, callbackFinal, callbackYillar, callbackKazananlar) {
+	const finalistsData = callbackFinal(arrTtoBeLooked)
+	const yearsData = callbackYillar(finalistsData, callbackFinal);
+	const winners = callbackKazananlar(finalistsData, callbackFinal)
+	let result = [];
+	for (let i = 0; i < finalistsData.length; i++) {
+	result.push(`${yearsData[i]} yılında, ${winners[i]} dünya kupasını kazandı!`)
+	}
+	return result;
 }
+console.table(YillaraGoreKazananlar(fifaData, Finaller, Yillar, Kazananlar));
 
 
 /*  Görev 6: 
