@@ -41,7 +41,7 @@ console.table(Finaller(fifaData));
 	*/
 
 function Yillar(arrTtoBeLooked, callback) {
-	return callback(arrTtoBeLooked).filter((yil) => yil.Year);
+	return callback(arrTtoBeLooked).map((yil) => yil.Year);
 }
 console.table(Yillar(fifaData, Finaller));
 
@@ -92,14 +92,14 @@ console.table(Kazananlar(fifaData, Finaller));
 function YillaraGoreKazananlar(arrTtoBeLooked, callbackFinal, callbackYillar, callbackKazananlar) {
 	const finalistsData = callbackFinal(arrTtoBeLooked)
 	const yearsData = callbackYillar(finalistsData, callbackFinal);
-	const winners = callbackKazananlar(finalistsData, callbackFinal)
+	const winners = callbackKazananlar(finalistsData, callbackFinal);
 	let result = [];
 	for (let i = 0; i < finalistsData.length; i++) {
 	result.push(`${yearsData[i]} yılında, ${winners[i]} dünya kupasını kazandı!`)
 	}
 	return result;
 }
-console.table(YillaraGoreKazananlar(fifaData, Finaller, Yillar, Kazananlar));
+console.table(YillaraGoreKazananlar(fifaData, Finaller, Yillar, Kazananlar));
 
 
 /*  Görev 6: 
@@ -116,13 +116,16 @@ console.table(YillaraGoreKazananlar(fifaData, Finaller, Yillar, Kazananlar));
 	
 */
 
-function OrtalamaGolSayisi(/* kodlar buraya */) {
+function OrtalamaGolSayisi(callbackFinal) {
 	
-    /* kodlar buraya */
-	
+    const total = callbackFinal.reduce((toplam, deger) => {
+return toplam + deger["Home Team Goals"] +deger["Away Team Goals"]
+	}, 0)
+let avrg = (total/(callbackFinal.length)).toFixed(2);
+return avrg;
 }
 
-
+console.table(OrtalamaGolSayisi(Finaller(fifaData)));
 
 /// EKSTRA ÇALIŞMALAR ///
 
